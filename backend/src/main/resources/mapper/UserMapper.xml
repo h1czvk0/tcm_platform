@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tcm.platform.mapper.UserMapper">
+
+    <resultMap id="BaseResultMap" type="com.tcm.platform.entity.User">
+        <id column="user_id" property="userId" />
+        <result column="username" property="username" />
+        <result column="password" property="password" />
+        <result column="nickname" property="nickname" />
+        <result column="avatar_url" property="avatarUrl" />
+        <result column="wechat_openid" property="wechatOpenid" />
+        <result column="phone" property="phone" />
+        <result column="age" property="age" />
+        <result column="gender" property="gender" />
+        <result column="registration_date" property="registrationDate" />
+        <result column="last_login_date" property="lastLoginDate" />
+        <result column="account_status" property="accountStatus" />
+        <result column="created_at" property="createdAt" />
+        <result column="updated_at" property="updatedAt" />
+    </resultMap>
+
+    <select id="selectByUsername" resultMap="BaseResultMap">
+        SELECT * FROM user
+        WHERE username = #{username} AND deleted = 0
+    </select>
+
+    <select id="selectByWechatOpenid" resultMap="BaseResultMap">
+        SELECT * FROM user
+        WHERE wechat_openid = #{openid} AND deleted = 0
+    </select>
+
+    <select id="selectUserPage" resultMap="BaseResultMap">
+        SELECT * FROM user
+        WHERE deleted = 0
+        <if test="keyword != null and keyword != ''">
+            AND (username LIKE CONCAT('%', #{keyword}, '%')
+            OR nickname LIKE CONCAT('%', #{keyword}, '%')
+            OR phone LIKE CONCAT('%', #{keyword}, '%'))
+        </if>
+        <if test="status != null and status != ''">
+            AND account_status = #{status}
+        </if>
+        ORDER BY created_at DESC
+    </select>
+
+</mapper>

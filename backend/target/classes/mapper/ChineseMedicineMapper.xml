@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tcm.platform.mapper.ChineseMedicineMapper">
+
+    <select id="selectMedicinePage" resultType="com.tcm.platform.entity.ChineseMedicine">
+        SELECT * FROM chinese_medicine
+        WHERE 1=1
+        <if test="keyword != null and keyword != ''">
+            AND (medicine_name LIKE CONCAT('%', #{keyword}, '%')
+            OR medicine_alias LIKE CONCAT('%', #{keyword}, '%')
+            OR functions LIKE CONCAT('%', #{keyword}, '%'))
+        </if>
+        <if test="nature != null and nature != ''">
+            AND nature = #{nature}
+        </if>
+        ORDER BY created_at DESC
+    </select>
+
+    <update id="incrementViewsCount">
+        UPDATE chinese_medicine
+        SET views_count = views_count + 1
+        WHERE medicine_id = #{medicineId}
+    </update>
+
+    <update id="incrementCollectionCount">
+        UPDATE chinese_medicine
+        SET collection_count = collection_count + 1
+        WHERE medicine_id = #{medicineId}
+    </update>
+
+    <update id="decrementCollectionCount">
+        UPDATE chinese_medicine
+        SET collection_count = collection_count - 1
+        WHERE medicine_id = #{medicineId} AND collection_count > 0
+    </update>
+
+</mapper>
